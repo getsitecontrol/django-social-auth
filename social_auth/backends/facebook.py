@@ -15,6 +15,7 @@ import cgi
 import base64
 import hmac
 import hashlib
+import json
 import time
 from urllib import urlencode
 from urllib2 import HTTPError
@@ -32,11 +33,10 @@ from django.http import HttpResponse
 from django.template import TemplateDoesNotExist, RequestContext, loader
 
 from social_auth.backends import BaseOAuth2, OAuthBackend
-from social_auth.utils import sanitize_log_data, backend_setting, setting,\
+from social_auth.utils import sanitize_log_data, backend_setting, setting, \
     log, dsa_urlopen
-from social_auth.exceptions import AuthException, AuthCanceled, AuthFailed,\
+from social_auth.exceptions import AuthException, AuthCanceled, AuthFailed, \
     AuthTokenError, AuthUnknownError
-
 
 # Facebook configuration
 FACEBOOK_ME = 'https://graph.facebook.com/me?'
@@ -139,12 +139,9 @@ class FacebookAuth(BaseOAuth2):
                 raise AuthFailed(self, 'There was an error authenticating '
                                        'the app')
 
-            response = payload.read()
-            parsed_response = cgi.parse_qs(response)
-
-            access_token = parsed_response['access_token'][0]
-            if 'expires' in parsed_response:
-                expires = parsed_response['expires'][0]
+            response = json.loads(payload.read())
+            access_token = response['access_token']
+            expires = response.get('expires_in')
 
         if 'signed_request' in self.data:
             response = load_signed_request(
@@ -153,8 +150,8 @@ class FacebookAuth(BaseOAuth2):
             )
 
             if response is not None:
-                access_token = response.get('access_token') or\
-                               response.get('oauth_token') or\
+                access_token = response.get('access_token') or \
+                               response.get('oauth_token') or \
                                self.data.get('access_token')
 
                 if 'expires' in response:
@@ -171,7 +168,7 @@ class FacebookAuth(BaseOAuth2):
     @classmethod
     def process_refresh_token_response(cls, response):
         return dict((key, val[0])
-                        for key, val in cgi.parse_qs(response).iteritems())
+                    for key, val in cgi.parse_qs(response).iteritems())
 
     @classmethod
     def refresh_token_params(cls, token):
@@ -208,7 +205,7 @@ class FacebookAuth(BaseOAuth2):
     @classmethod
     def enabled(cls):
         """Return backend enabled status by checking basic settings"""
-        return backend_setting(cls, cls.SETTINGS_KEY_NAME) and\
+        return backend_setting(cls, cls.SETTINGS_KEY_NAME) and \
                backend_setting(cls, cls.SETTINGS_SECRET_NAME)
 
     @classmethod
@@ -237,12 +234,12 @@ def load_signed_request(signed_request, api_secret=None):
         data = simplejson.loads(base64_url_decode(payload))
 
         expected_sig = hmac.new(api_secret or setting('FACEBOOK_API_SECRET'),
-            msg=payload,
-            digestmod=hashlib.sha256).digest()
+                                msg=payload,
+                                digestmod=hashlib.sha256).digest()
 
         # allow the signed_request to function for upto 1 day
         if sig == expected_sig and \
-           data[u'issued_at'] > (time.time() - 86400):
+                        data[u'issued_at'] > (time.time() - 86400):
             return data
     except ValueError:
         pass  # ignore if can't split on dot
@@ -266,8 +263,8 @@ class FacebookAppAuth(FacebookAuth):
             )
 
             if response is not None:
-                access_token = response.get('access_token') or\
-                               response.get('oauth_token') or\
+                access_token = response.get('access_token') or \
+                               response.get('oauth_token') or \
                                self.data.get('access_token')
 
                 if 'expires' in response:

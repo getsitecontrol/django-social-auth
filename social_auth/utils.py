@@ -11,10 +11,9 @@ from collections import defaultdict
 
 from django.conf import settings
 from django.db.models import Model
-from django.db.models.loading import get_model
 from django.contrib.contenttypes.models import ContentType
 from django.utils.functional import SimpleLazyObject
-from django.utils.importlib import import_module
+from importlib import import_module
 
 
 try:

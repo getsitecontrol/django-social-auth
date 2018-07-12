@@ -57,7 +57,7 @@ def facebook_decorator(func):
             else:
                 request.user = AnonymousUser()
 
-        signed_request = load_signed_request(request.REQUEST.get('signed_request', ''))
+        signed_request = load_signed_request(request.GET.get('signed_request', ''))
         if signed_request:
             kwargs.update({'signed_request': signed_request})
 

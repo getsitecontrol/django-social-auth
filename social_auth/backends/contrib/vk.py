@@ -231,16 +231,16 @@ class VKAppAuth(VKOAuth2):
                            'api_id')
 
         for param in required_params:
-            if not param in self.request.REQUEST:
+            if not param in self.request.GET:
                 return (False, None)
 
-        auth_key = self.request.REQUEST.get('auth_key')
+        auth_key = self.request.GET.get('auth_key')
 
         # Verify signature, if present
         if auth_key:
             check_key = md5('_'.join([
                 setting(self.SETTINGS_KEY_NAME),
-                self.request.REQUEST.get('viewer_id'),
+                self.request.GET.get('viewer_id'),
                 setting(self.SETTINGS_SECRET_NAME)
             ])).hexdigest()
 
@@ -249,10 +249,10 @@ class VKAppAuth(VKOAuth2):
                                  'auth key')
 
         user_check = setting('VKAPP_USER_MODE', 0)
-        user_id = self.request.REQUEST.get('viewer_id')
+        user_id = self.request.GET.get('viewer_id')
 
         if user_check:
-            is_user = self.request.REQUEST.get('is_app_user') \
+            is_user = self.request.GET.get('is_app_user') \
                         if user_check == 1 else self.is_app_user(user_id)
 
             if not int(is_user):

@@ -84,7 +84,7 @@ class ShopifyAuth(BaseOAuth2):
                 secret=setting('SHOPIFY_SHARED_SECRET')
             )
             shopify_session = self.shopifyAPI.Session(shop_url,
-                                                      self.request.REQUEST)
+                                                      self.request.GET)
             access_token = shopify_session.token
         except self.shopifyAPI.ValidationException, e:
             raise AuthCanceled(self)

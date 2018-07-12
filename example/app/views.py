@@ -1,8 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import redirect, render
 from django.contrib.messages.api import get_messages
 
 from social_auth import __version__ as version
@@ -14,8 +13,7 @@ def home(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect('done')
     else:
-        return render_to_response('home.html', {'version': version},
-                                  RequestContext(request))
+        return render(request, 'home.html', {'version': version})
 
 
 @login_required
@@ -25,15 +23,14 @@ def done(request):
         'version': version,
         'last_login': request.session.get('social_auth_last_login_backend')
     }
-    return render_to_response('done.html', ctx, RequestContext(request))
+    return render(request, 'done.html', ctx,)
 
 
 def error(request):
     """Error view"""
     messages = get_messages(request)
-    return render_to_response('error.html', {'version': version,
-                                             'messages': messages},
-                              RequestContext(request))
+    return render(request, 'error.html', {'version': version,
+                                             'messages': messages})
 
 
 def logout(request):
@@ -48,7 +45,7 @@ def form(request):
         request.session['saved_username'] = request.POST['username']
         backend = request.session[name]['backend']
         return redirect('socialauth_complete', backend=backend)
-    return render_to_response('form.html', {}, RequestContext(request))
+    return render(request, 'form.html', {})
 
 
 def form2(request):
@@ -57,8 +54,8 @@ def form2(request):
         name = setting('SOCIAL_AUTH_PARTIAL_PIPELINE_KEY', 'partial_pipeline')
         backend = request.session[name]['backend']
         return redirect('socialauth_complete', backend=backend)
-    return render_to_response('form2.html', {}, RequestContext(request))
+    return render(request, 'form2.html', {})
 
 
 def close_login_popup(request):
-    return render_to_response('close_popup.html', {}, RequestContext(request))
+    return render(request, 'close_popup.html', {})

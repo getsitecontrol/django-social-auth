@@ -1,8 +1,7 @@
 from django.contrib.auth import BACKEND_SESSION_KEY
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
-from django.template.context import RequestContext
+from django.shortcuts import render
 
 from django.core.cache import cache
 from django.conf import settings
@@ -71,8 +70,7 @@ def vkontakte_view(request, *args, **kwargs):
             if item[0] == 'Location' and 'form' in item[1]:
                 return auth_response
 
-    return render_to_response('vkontakte_app.html',
+    return render(request, 'vkontakte_app.html',
                                 {'vk_app_id': settings.VKONTAKTE_APP_AUTH['id'] if hasattr(settings, 'VKONTAKTE_APP_AUTH') else None,
                                  'app_scope': ','.join(settings.VKONTAKTE_OAUTH2_EXTRA_SCOPE),
-                                 'warning': not request.GET.get('user_id')},
-                                RequestContext(request))
+                                 'warning': not request.GET.get('user_id')})

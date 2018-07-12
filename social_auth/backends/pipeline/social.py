@@ -4,7 +4,7 @@ from social_auth.models import UserSocialAuth, SOCIAL_AUTH_MODELS_MODULE
 from social_auth.exceptions import AuthAlreadyAssociated
 
 
-def social_auth_user(backend, uid, user=None, *args, **kwargs):
+def social_auth_user(request, backend=None, uid=None, user=None, *args, **kwargs):
     """Return UserSocialAuth account for backend/uid pair or None if it
     doesn't exists.
 
@@ -25,7 +25,7 @@ def social_auth_user(backend, uid, user=None, *args, **kwargs):
             'new_association': False}
 
 
-def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
+def associate_user(request, backend, user, uid, social_user=None, *args, **kwargs):
     """Associate user social account with user instance."""
     if social_user or not user:
         return None
@@ -46,7 +46,7 @@ def associate_user(backend, user, uid, social_user=None, *args, **kwargs):
                 'new_association': True}
 
 
-def load_extra_data(backend, details, response, uid, user, social_user=None,
+def load_extra_data(request, backend, details, response, uid, user, social_user=None,
                     *args, **kwargs):
     """Load extra data from provider and store it on current UserSocialAuth
     extra_data field.

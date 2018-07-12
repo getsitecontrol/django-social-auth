@@ -4,7 +4,7 @@ from social_auth.models import UserSocialAuth
 from social_auth.exceptions import AuthException
 
 
-def associate_by_email(details, user=None, *args, **kwargs):
+def associate_by_email(request, details=None, user=None, *args, **kwargs):
     """Return user entry with same email address as one returned on details."""
     if user:
         return None

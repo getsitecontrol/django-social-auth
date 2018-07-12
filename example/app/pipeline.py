@@ -1,8 +1,8 @@
 from django.http import HttpResponseRedirect
 
 
-def redirect_to_form(*args, **kwargs):
-    if not kwargs['request'].session.get('saved_username') and \
+def redirect_to_form(request, *args, **kwargs):
+    if not request.session.get('saved_username') and \
        kwargs.get('user') is None:
         return HttpResponseRedirect('/form/')
 

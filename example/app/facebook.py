@@ -1,8 +1,7 @@
 from django.contrib.auth import BACKEND_SESSION_KEY
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
-from django.template.context import RequestContext
+from django.shortcuts import render
 
 from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
@@ -74,5 +73,5 @@ def facebook_view(request, *args, **kwargs):
     if auth_response:
         return auth_response
 
-    return render_to_response('facebook.html', {'fb_app_id':setting('FACEBOOK_APP_ID'),
-                                                'warning': request.method == 'GET'}, RequestContext(request))
+    return render(request, 'facebook.html', {'fb_app_id':setting('FACEBOOK_APP_ID'),
+                                                'warning': request.method == 'GET'})

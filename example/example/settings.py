@@ -150,11 +150,14 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
+                'django.template.context_processors.request',
                 'django.contrib.messages.context_processors.messages',
-                'social_auth.context_processors.social_auth_by_type_backends', ],
-            'loaders': [
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader', ],
+                'social_auth.context_processors.social_auth_by_type_backends',
+            ],
+
+            # 'loaders': [
+            #     'django.template.loaders.filesystem.Loader',
+            #     'django.template.loaders.app_directories.Loader', ],
             'debug': DEBUG
         },
     },

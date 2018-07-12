@@ -46,7 +46,7 @@ def get_username(details, user=None,
     return {'username': final_username}
 
 
-def create_user(backend, details, response, uid, username, user=None, *args,
+def create_user(request, backend, details, response, uid, username, user=None, *args,
                 **kwargs):
     """Create user. Depends on get_username pipeline."""
     if user:
@@ -114,7 +114,7 @@ def django_orm_maxlength_truncate(backend, details, user=None, is_new=False,
     return {'details': out}
 
 
-def update_user_details(backend, details, response, user=None, is_new=False,
+def update_user_details(request, backend, details, response, user=None, is_new=False,
                         *args, **kwargs):
     """Update user details using data from provider."""
     if user is None:

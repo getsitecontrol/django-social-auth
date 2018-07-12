@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 from django.contrib import admin
 
 from app.views import home, done, logout, error, form, form2, close_login_popup
@@ -9,7 +9,7 @@ from app.odnoklassniki import ok_app, ok_app_info
 admin.autodiscover()
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', home, name='home'),
     url(r'^done/$', done, name='done'),
     url(r'^error/$', error, name='error'),
@@ -23,4 +23,4 @@ urlpatterns = patterns('',
     url(r'^ok/info/$', ok_app_info, name='ok_app_info'),
     url(r'^close_login_popup/$', close_login_popup, name='login_popup_close'),
     url(r'', include('social_auth.urls')),
-)
+]

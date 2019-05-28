@@ -1,4 +1,4 @@
-django<1.12
+Django>=1.11,<1.12
 oauth2>=1.5.167
 python_openid>=2.2
 selenium>=2.29.0

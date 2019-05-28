@@ -31,17 +31,16 @@ from importlib import import_module
 
 from social_auth.models import UserSocialAuth
 from social_auth.utils import setting, model_to_ctype, ctype_to_model, \
-                              clean_partial_pipeline, url_add_parameters, \
-                              get_random_string, constant_time_compare, \
-                              dsa_urlopen
+    clean_partial_pipeline, url_add_parameters, \
+    get_random_string, constant_time_compare, \
+    dsa_urlopen
 from social_auth.store import DjangoOpenIDStore
 from social_auth.exceptions import StopPipeline, AuthException, AuthFailed, \
-                                   AuthCanceled, AuthUnknownError, \
-                                   AuthTokenError, AuthMissingParameter, \
-                                   AuthStateMissing, AuthStateForbidden, \
-                                   NotAllowedToDisconnect, BackendError
+    AuthCanceled, AuthUnknownError, \
+    AuthTokenError, AuthMissingParameter, \
+    AuthStateMissing, AuthStateForbidden, \
+    NotAllowedToDisconnect, BackendError
 from social_auth.backends.utils import build_consumer_oauth_request
-
 
 # OpenID configuration
 OLD_AX_ATTRS = [
@@ -67,16 +66,16 @@ OPENID_ID_FIELD = 'openid_identifier'
 SESSION_NAME = 'openid'
 
 PIPELINE = setting('SOCIAL_AUTH_PIPELINE', (
-                'social_auth.backends.pipeline.social.social_auth_user',
-                # Removed by default since it can be a dangerouse behavior that
-                # could lead to accounts take over.
-                #'social_auth.backends.pipeline.associate.associate_by_email',
-                'social_auth.backends.pipeline.user.get_username',
-                'social_auth.backends.pipeline.user.create_user',
-                'social_auth.backends.pipeline.social.associate_user',
-                'social_auth.backends.pipeline.social.load_extra_data',
-                'social_auth.backends.pipeline.user.update_user_details',
-           ))
+    'social_auth.backends.pipeline.social.social_auth_user',
+    # Removed by default since it can be a dangerouse behavior that
+    # could lead to accounts take over.
+    # 'social_auth.backends.pipeline.associate.associate_by_email',
+    'social_auth.backends.pipeline.user.get_username',
+    'social_auth.backends.pipeline.user.create_user',
+    'social_auth.backends.pipeline.social.associate_user',
+    'social_auth.backends.pipeline.social.load_extra_data',
+    'social_auth.backends.pipeline.user.update_user_details',
+))
 
 
 class SocialAuthBackend(object):
@@ -85,7 +84,7 @@ class SocialAuthBackend(object):
     name = ''  # provider name, it's stored in database
     supports_inactive_user = False
 
-    def authenticate(self, *args, **kwargs):
+    def authenticate(self, request, *args, **kwargs):
         """Authenticate user using social credentials
 
         Authentication is made if this is the correct backend, backend
@@ -103,6 +102,7 @@ class SocialAuthBackend(object):
         pipeline = PIPELINE
         kwargs = kwargs.copy()
         kwargs['backend'] = self
+        kwargs['request'] = request
 
         if 'pipeline_index' in kwargs:
             pipeline = pipeline[kwargs['pipeline_index']:]
@@ -250,6 +250,7 @@ class OAuthBackend(SocialAuthBackend):
 
         return data
 
+
 class OpenIDBackend(SocialAuthBackend):
     """Generic OpenID authentication backend"""
     name = 'openid'
@@ -272,7 +273,7 @@ class OpenIDBackend(SocialAuthBackend):
             resp = sreg.SRegResponse.fromSuccessResponse(response)
             if resp:
                 values.update((alias, resp.get(name) or '')
-                                    for name, alias in sreg_names)
+                              for name, alias in sreg_names)
 
         # Use Attribute Exchange attributes if provided
         if ax_names:
@@ -367,7 +368,7 @@ class BaseAuth(object):
             'backend': self.AUTH_BACKEND.name,
             'args': tuple(map(model_to_ctype, args)),
             'kwargs': dict((key, model_to_ctype(val))
-                                for key, val in kwargs.iteritems())
+                           for key, val in kwargs.iteritems())
         }
 
     def from_session_dict(self, session_data, *args, **kwargs):
@@ -438,8 +439,8 @@ class BaseAuth(object):
                 filter_args['id'] = association_id
             else:
                 filter_args['provider'] = name
-            instances = UserSocialAuth.get_social_auth_for_user(user)\
-                                      .filter(**filter_args)
+            instances = UserSocialAuth.get_social_auth_for_user(user) \
+                .filter(**filter_args)
 
             if do_revoke:
                 for instance in instances:
@@ -540,7 +541,7 @@ class OpenIdAuth(BaseAuth):
                 max_age = None
 
         if (max_age is not None or preferred_policies is not None
-           or preferred_level_types is not None):
+                or preferred_level_types is not None):
             pape_request = pape.Request(
                 preferred_auth_policies=preferred_policies,
                 max_auth_age=max_age,
@@ -560,8 +561,8 @@ class OpenIdAuth(BaseAuth):
         """Return true if openid request will be handled with redirect or
         HTML content will be returned.
         """
-        return self.openid_request(self.auth_extra_arguments())\
-                        .shouldSendRedirect()
+        return self.openid_request(self.auth_extra_arguments()) \
+            .shouldSendRedirect()
 
     def openid_request(self, extra_params=None):
         """Return openid request"""
@@ -937,8 +938,8 @@ class BaseOAuth2(BaseOAuth):
 # provide a deprecation warning.
 if setting('SOCIAL_AUTH_IMPORT_BACKENDS'):
     from warnings import warn
-    warn("SOCIAL_AUTH_IMPORT_SOURCES is deprecated")
 
+    warn("SOCIAL_AUTH_IMPORT_SOURCES is deprecated")
 
 # Cache for discovered backends.
 BACKENDSCACHE = {}
